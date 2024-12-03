@@ -59,12 +59,18 @@ export const verifyOtp = async (req, res) => {
       return res.send({ message: " All Fields are Required" });
     }
 
-    const existOtp = await Otp.find({ email });
+    const existOtp = await Otp.findOne({ email });
+
+    console.log("existOtp", existOtp);
 
     if (!existOtp) {
-      return res.send({ message: "existOtp not Exist" });
+      return res.send({ message: "Otp not Exist" });
     }
-    if (existOtp.otpCode === otpCode) {
+
+    console.log("condition", existOtp, otpCode, existOtp.otpCode == otpCode);
+    if (existOtp && existOtp.otpCode === otpCode) {
+      await Otp.findOneAndDelete({ email });
+
       return res.send({ message: "Otp Match Successfuly" });
     } else {
       return res.send({ message: "Otp dont  Match " });
